@@ -14,6 +14,7 @@ config :gitexpress, GitExPressWeb.Endpoint,
   watchers: [node: ["node_modules/webpack/bin/webpack.js", "--mode", "development", "--watch-stdin",
                     cd: Path.expand("../assets", __DIR__)]]
 
+
 # ## SSL Support
 #
 # In order to use HTTPS in development, a self-signed
@@ -58,3 +59,7 @@ config :phoenix, :stacktrace_depth, 20
 
 # Initialize plugs at runtime for faster development compilation
 config :phoenix, :plug_init_mode, :runtime
+
+config :gitexpress, GitExPress.Entries.Parser,
+  local_source: "",
+  remote_source: ""

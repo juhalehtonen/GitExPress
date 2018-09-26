@@ -12,6 +12,7 @@ defmodule GitExPress.Application do
       GitExPressWeb.Endpoint,
       # Starts a worker by calling: GitExPress.Worker.start_link(arg)
       # {GitExPress.Worker, arg},
+      {GitExPress.Worker, name: GitExPress.Worker}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
