@@ -17,10 +17,11 @@ defmodule GitExPress.Entries do
   @spec fetch_entries(atom()) :: no_return()
   def fetch_entries(location) when is_atom(location) do
     case location do
-      :local -> {:error, "Nope buddy"}
+      :local ->
+        GitExPress.Entries.Parser.generate_posts()
+        {:ok, "This should be done with with"}
       :remote -> {:error, "Not implemented yet"}
     end
-    {:error, "Failed to fetch entries"}
   end
 
   @doc """
@@ -39,7 +40,7 @@ defmodule GitExPress.Entries do
   Creates an entry and saves it to the database.
   """
   def create_entry(entry) do
-    %Entry{title: entry.title, date: entry.date, slug: entry.slug, content_raw: content_raw, content_html: content_html}
+    %Entry{title: entry.title, date: entry.date, slug: entry.slug, content_raw: entry.content_raw, content_html: entry.content_html}
     |> Storage.insert_entry()
   end
 end

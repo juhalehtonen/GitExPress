@@ -14,12 +14,14 @@ defmodule GitExPress.Entries.Parser do
   Go through all markdown posts and generates Posts from each.
   """
   def generate_posts(path \\ @local_source) do
+    IO.inspect path
+
     path
     |> get_files()
-    |> Enum.map(fn file -> Task.async GitExPress.Parser, :read, [file] end)
+    |> Enum.map(fn file -> Task.async GitExPress.Entries.Parser, :read, [file] end)
     |> handle_tasks()
     |> Enum.map(fn post ->
-         Task.async GitExPress.Parser, :construct_post, [post]
+         Task.async GitExPress.Entries.Parser, :construct_post, [post]
        end)
     |> handle_tasks()
   end
@@ -82,7 +84,6 @@ defmodule GitExPress.Entries.Parser do
     date = extract_date(Enum.at(meta, 1))
     slug = Slugger.slugify_downcase(Enum.at(meta, 0))
 
-    meta = %{title: title, date: date, slug: slug}
     content_raw = List.to_string(content)
     content_html = Earmark.as_html!(content)
 
@@ -120,3 +121,4 @@ defmodule GitExPress.Entries.Parser do
       _           -> ""
     end
   end
+end

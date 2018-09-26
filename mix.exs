@@ -38,7 +38,9 @@ defmodule GitExPress.MixProject do
       {:phoenix_live_reload, "~> 1.0", only: :dev},
       {:gettext, "~> 0.11"},
       {:jason, "~> 1.0"},
-      {:cowboy, "~> 1.0"}
+      {:cowboy, "~> 1.0"},
+      {:slugger, "~> 0.3.0"},
+      {:earmark, "~> 1.2"}
     ]
   end
 end

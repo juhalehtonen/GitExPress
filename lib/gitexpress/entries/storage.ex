@@ -39,6 +39,8 @@ defmodule GitExPress.Entries.Storage do
       )
     end
 
+    IO.puts "Data put to database yo"
+
     perform_transaction(data_to_write)
   end
 
@@ -53,7 +55,7 @@ defmodule GitExPress.Entries.Storage do
   """
   def get_entries() do
     data_to_read = fn ->
-      Mnesia.read(@entry_table)
+      Mnesia.match_object({Entry, :_, :_, :_, :_})
     end
 
     perform_transaction(data_to_read)
@@ -63,7 +65,9 @@ defmodule GitExPress.Entries.Storage do
   @spec perform_transaction(fun()) :: tuple()
   defp perform_transaction(data) do
     case Mnesia.transaction(data) do
-      {:atomic, result} -> {:ok, result}
+      {:atomic, result} ->
+        IO.puts "Transaction OK"
+        {:ok, result}
       {:aborted, reason} -> {:error, reason}
     end
   end
