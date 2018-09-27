@@ -18,8 +18,8 @@ defmodule GitExPress.Entries do
   def fetch_entries(location) when is_atom(location) do
     case location do
       :local ->
-        GitExPress.Entries.Parser.generate_posts()
-        {:ok, "This should be done with with"}
+        entries = GitExPress.Entries.Parser.generate_entries()
+        {:ok, entries}
       :remote -> {:error, "Not implemented yet"}
     end
   end
@@ -30,8 +30,8 @@ defmodule GitExPress.Entries do
   def list_entries do
     {:ok, entries} = Storage.get_entries()
 
-    Enum.map(entries, fn {Entries, title, date, slug, content_raw, content_html} ->
-      %Entry{title: title, date: date, slug: slug, content_raw: content_raw, content_html: content_html}
+    Enum.map(entries, fn {_table, title, date, slug, content_raw, content_html, content_type} ->
+      %Entry{title: title, date: date, slug: slug, content_raw: content_raw, content_html: content_html, content_type: content_type}
     end)
     |> Enum.sort_by(fn entry -> entry.date end)
   end

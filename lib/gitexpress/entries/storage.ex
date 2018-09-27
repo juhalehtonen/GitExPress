@@ -21,8 +21,18 @@ defmodule GitExPress.Entries.Storage do
   @spec init() :: :ok | {:error, any()}
   def init do
     Mnesia.create_schema([node()])
-    Mnesia.create_table(@entry_table, attributes: [:title, :date, :slug, :content_raw, :content_html])
-    Mnesia.add_table_index(@entry_table, :date)
+
+    case Mnesia.create_table(@entry_table, [
+          record_name: @entry_table,
+          attributes: [:title, :date, :slug, :content_raw, :content_html, :content_type]
+        ]
+        ) do
+      {:atomic, :ok} ->
+        Mnesia.add_table_index(@entry_table, :content_type)
+      _ ->
+        :ok
+    end
+
     Mnesia.start()
   end
 
@@ -32,14 +42,13 @@ defmodule GitExPress.Entries.Storage do
   can be executed as one functional block.
   """
   @spec insert_entry(%Entry{}) :: {:ok, String.t()} | {:error, String.t()}
-  def insert_entry(entry) when is_map(entry) do
+  def insert_entry(entry) do
+
     data_to_write = fn ->
       Mnesia.write(
-        {@entry_table, entry.title, entry.date, entry.slug, entry.content_raw, entry.content_html}
+        {@entry_table, entry.title, entry.date, entry.slug, entry.content_raw, entry.content_html, entry.content_type}
       )
     end
-
-    IO.puts "Data put to database yo"
 
     perform_transaction(data_to_write)
   end
@@ -55,7 +64,7 @@ defmodule GitExPress.Entries.Storage do
   """
   def get_entries() do
     data_to_read = fn ->
-      Mnesia.match_object({Entry, :_, :_, :_, :_})
+      Mnesia.index_read(@entry_table, "blog", :content_type)
     end
 
     perform_transaction(data_to_read)
@@ -66,9 +75,13 @@ defmodule GitExPress.Entries.Storage do
   defp perform_transaction(data) do
     case Mnesia.transaction(data) do
       {:atomic, result} ->
-        IO.puts "Transaction OK"
+        IO.puts("Transaction OK")
         {:ok, result}
-      {:aborted, reason} -> {:error, reason}
+
+      {:aborted, reason} ->
+        IO.puts("Transaction error")
+        IO.inspect reason
+        {:error, reason}
     end
   end
 end

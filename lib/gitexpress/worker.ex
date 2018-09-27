@@ -42,13 +42,8 @@ defmodule GitExPress.Worker do
 
   defp hydrate_entries do
     with :ok <- GitExPress.Entries.Storage.init(),
-         {:ok, msg} <- GitExPress.Entries.fetch_entries(:local) do
-      IO.puts("ok")
-      {:ok, msg}
-    else
-      {:error, reason} ->
-        IO.puts("nope")
-        {:error, reason}
+         {:ok, entries} <- GitExPress.Entries.fetch_entries(:local) do
+      Enum.each(entries, fn x -> GitExPress.Entries.Storage.insert_entry(x) end)
     end
   end
 end

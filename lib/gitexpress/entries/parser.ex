@@ -13,15 +13,13 @@ defmodule GitExPress.Entries.Parser do
   @doc """
   Go through all markdown posts and generates Posts from each.
   """
-  def generate_posts(path \\ @local_source) do
-    IO.inspect path
-
+  def generate_entries(path \\ @local_source) do
     path
     |> get_files()
     |> Enum.map(fn file -> Task.async GitExPress.Entries.Parser, :read, [file] end)
     |> handle_tasks()
-    |> Enum.map(fn post ->
-         Task.async GitExPress.Entries.Parser, :construct_post, [post]
+    |> Enum.map(fn entry ->
+         Task.async GitExPress.Entries.Parser, :construct_entry, [entry]
        end)
     |> handle_tasks()
   end
@@ -72,7 +70,7 @@ defmodule GitExPress.Entries.Parser do
   @doc """
   Construct a GitExPress Post using the `meta` and `content`.
   """
-  def construct_post({:ok, meta, content}) do
+  def construct_entry({:ok, meta, content}) do
     meta = Enum.map(meta, fn(x) ->
       x
       |> String.trim_leading("Title: ")
@@ -87,7 +85,7 @@ defmodule GitExPress.Entries.Parser do
     content_raw = List.to_string(content)
     content_html = Earmark.as_html!(content)
 
-    %Entry{title: title, date: date, slug: slug, content_raw: content_raw, content_html: content_html}
+    %Entry{title: title, date: date, slug: slug, content_raw: content_raw, content_html: content_html, content_type: "blog"}
   end
   def construct_post({:error, reason}), do: {:error, reason}
 

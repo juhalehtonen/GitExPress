@@ -8,5 +8,5 @@ defmodule GitExPress.Entries.Entry do
   in their own module.
   """
 
-  defstruct [:title, :date, :slug, :content_raw, :content_html]
+  defstruct [:title, :date, :slug, :content_raw, :content_html, :content_type]
 end

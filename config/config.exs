@@ -25,6 +25,13 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
+# Configure location for blog posts:
+# - a `local_source` for a directory where .md files live
+# - a `remote_source` for a git repository where .md files live
+config :gitexpress,
+  local_source: "/Users/juhalehtonen/blogposts",
+  remote_source: ""
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env}.exs"
