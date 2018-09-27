@@ -40,7 +40,8 @@ defmodule GitExPress.MixProject do
       {:jason, "~> 1.0"},
       {:cowboy, "~> 1.0"},
       {:slugger, "~> 0.3.0"},
-      {:earmark, "~> 1.2"}
+      {:earmark, "~> 1.2"},
+      {:git_cli, "~> 0.2.5"}
     ]
   end
 end
