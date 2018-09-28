@@ -40,7 +40,7 @@ defmodule GitExPress.Entries do
   Creates an entry and saves it to the database.
   """
   def create_entry(entry) do
-    %Entry{title: entry.title, date: entry.date, slug: entry.slug, content_raw: entry.content_raw, content_html: entry.content_html}
+    entry
     |> Storage.insert_entry()
   end
 end
