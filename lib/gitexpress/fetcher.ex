@@ -8,6 +8,9 @@ defmodule GitExPress.Fetcher do
 
   # TODO: Webhook config that allows us to expose an endpoint that can be plugged
   # into by web apps, allowing us to get updates whenever updates are pushed to git.
+  # NOTE: This needs to support multiple sources, at least GitHub and GitLab,
+  # as the ways to secure these webhooks differ between the two. For MVP, we can
+  # probably just support GitHub for starters.
 
   @doc """
   The main public-facing function that is used to facilitate the cloning and all
