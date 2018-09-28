@@ -2,7 +2,6 @@ defmodule GitExPress.Remote do
   # TODO: Webhook config that allows us to expose an endpoint that can be plugged
   # into by web apps, allowing us to get updates whenever updates are pushed to git.
 
-
   def clone([url, path]) do
     with {:ok, _stats} <- File.stat(path),
          {:ok, []} <- File.ls(path) do

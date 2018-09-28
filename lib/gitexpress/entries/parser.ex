@@ -5,15 +5,14 @@ defmodule GitExPress.Entries.Parser do
   """
   require Logger
   alias GitExPress.Entries.Entry
-  @local_source Application.get_env(:gitexpress, :local_source)
-  @remote_source Application.get_env(:gitexpress, :remote_source)
+  @source Application.get_env(:gitexpress, :local_path)
   @meta_title "Title: "
   @meta_date "Date: "
 
   @doc """
   Go through all markdown posts and generates Posts from each.
   """
-  def generate_entries(path \\ @local_source) do
+  def generate_entries(path \\ @source) do
     path
     |> get_files()
     |> Enum.map(fn file -> Task.async GitExPress.Entries.Parser, :read, [file] end)
@@ -29,9 +28,9 @@ defmodule GitExPress.Entries.Parser do
   Returns a list of paths.
   """
   @spec get_files(String.t) :: list(String.t)
-  def get_files(path \\ @local_source) do
+  def get_files(path \\ @source) do
     path = path <> "/**/*.md"
-    Logger.info "Searching '.md' files using '#{path}' with cwd '#{System.cwd}'"
+    Logger.info "Searching '.md' files using '#{path}' within '#{System.cwd}'"
 
     # Path.wildcard traverses paths according to the given glob expression and
     # returns a list of matches.

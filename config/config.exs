@@ -29,8 +29,8 @@ config :phoenix, :json_library, Jason
 # - a `local_source` for a directory where .md files live
 # - a `remote_source` for a git repository where .md files live
 config :gitexpress,
-  local_source: "/Users/juhalehtonen/blogposts",
-  remote_source: ""
+  local_path: "/Users/juhalehtonen/blogposts",
+  remote_repository_url: ""
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
