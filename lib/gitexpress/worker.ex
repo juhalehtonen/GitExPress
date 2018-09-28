@@ -20,11 +20,11 @@ defmodule GitExPress.Worker do
   Initialize GenServer & handle storage setup without having start_link block.
   """
   def init(state) do
-    send(self(), :setup_storage)
+    send(self(), :setup)
     {:ok, state}
   end
 
-  def handle_info(:setup_storage, state) do
+  def handle_info(:setup, state) do
     hydrate_entries()
     {:noreply, state}
   end
@@ -42,7 +42,7 @@ defmodule GitExPress.Worker do
 
   defp hydrate_entries do
     with :ok <- GitExPress.Entries.Storage.init(),
-         {:ok, entries} <- GitExPress.Entries.fetch_entries(:local) do
+         {:ok, entries} <- GitExPress.Entries.fetch_entries() do
       Enum.each(entries, fn x -> GitExPress.Entries.Storage.insert_entry(x) end)
     end
   end

@@ -5,6 +5,10 @@ defmodule GitExPress.Entries do
   """
   alias GitExPress.Entries.Entry
   alias GitExPress.Entries.Storage
+  alias GitExPress.Fetcher
+
+  @local_path Application.get_env(:gitexpress, :local_path)
+  @remote_repository_url Application.get_env(:gitexpress, :remote_repository_url)
 
   @doc """
   Update all entries to their latest available batch. Called by the GenServer
@@ -14,14 +18,10 @@ defmodule GitExPress.Entries do
   TODO: Make async. Use `with` and check that all fetches succeed, and if not,
   retry.
   """
-  @spec fetch_entries(atom()) :: no_return()
-  def fetch_entries(location) when is_atom(location) do
-    case location do
-      :local ->
-        entries = GitExPress.Entries.Parser.generate_entries()
-        {:ok, entries}
-      :remote -> {:error, "Not implemented yet"}
-    end
+  def fetch_entries do
+    Fetcher.fetch([@remote_repository_url, @local_path])
+    entries = GitExPress.Entries.Parser.generate_entries()
+    {:ok, entries}
   end
 
   @doc """

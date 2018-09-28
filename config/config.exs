@@ -30,7 +30,7 @@ config :phoenix, :json_library, Jason
 # - a `remote_source` for a git repository where .md files live
 config :gitexpress,
   local_path: "/Users/juhalehtonen/blogposts",
-  remote_repository_url: ""
+  remote_repository_url: "https://gitlab.com/juhalehtonen/test.git"
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
