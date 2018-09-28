@@ -71,6 +71,30 @@ defmodule GitExPress.Entries.Storage do
     perform_transaction(data_to_read)
   end
 
+  @doc """
+  Get entries by field and value, where field is the field in the Entry struct you
+  want to look for, and value is the value of that field.
+
+  [:title, :date, :slug, :content_raw, :content_html, :content_type]
+
+  # TODO: Restrict only to specific field atoms, now we can pass anything and still attempt a transaction
+  """
+  def get_entries_by(field, value) when is_atom(field) do
+    data_to_read =
+      case field do
+        :title ->
+          fn -> Mnesia.match_object({@entry_table, value, :_, :_, :_, :_, :_}) end
+        :date ->
+          fn -> Mnesia.match_object({@entry_table, :_, value, :_, :_, :_, :_}) end
+        :slug ->
+          fn -> Mnesia.match_object({@entry_table, :_, :_, value, :_, :_, :_}) end
+        :content_type ->
+          fn -> Mnesia.match_object({@entry_table, :_, :_, :_, :_, :_, value}) end
+      end
+
+    perform_transaction(data_to_read)
+  end
+
   # Perform an Mnesia transaction on given `data`, where `data` is an Entry.
   @spec perform_transaction(fun()) :: tuple()
   defp perform_transaction(data) do
