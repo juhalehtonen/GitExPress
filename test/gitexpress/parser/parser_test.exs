@@ -14,7 +14,6 @@ defmodule GitExPress.ParserTest do
   end
 
   test "Can locate .md files in a directory" do
-    # Current working directory contains the README.md file
     {:ok, path} = File.cwd()
     assert Parser.get_files(path) != []
   end
@@ -23,7 +22,7 @@ defmodule GitExPress.ParserTest do
 
   test "Can extract a valid date from a valid string" do
     date = Parser.extract_date("2017-01-01")
-    assert Date.add(date, 1) == ~D[2017-01-02]
+    assert date == ~D[2017-01-01]
   end
 
   test "Extracting a date from an invalid string returns an empty string" do

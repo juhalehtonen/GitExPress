@@ -21,6 +21,9 @@ defmodule GitExPress.Fetcher do
 
   If we cannot clone to git repository, check if it is still a git repository.
   If it is a git repo, we can do git pull. If it is not a git repo, error out.
+
+  TODO: Rename to something else, as fetch is a git term that we are not actually
+  doing here. Maybe just `get`?
   """
   def fetch([repo_url, to_path]) do
     cond do
