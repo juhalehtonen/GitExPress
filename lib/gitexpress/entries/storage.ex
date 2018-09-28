@@ -2,6 +2,7 @@ defmodule GitExPress.Entries.Storage do
   @moduledoc """
   This Storage module handles the Mnesia database.
   """
+  require Logger
   alias :mnesia, as: Mnesia
   alias GitExPress.Entries.Entry
   @entry_table GitExPressEntries
@@ -21,19 +22,19 @@ defmodule GitExPress.Entries.Storage do
   @spec init() :: :ok | {:error, any()}
   def init do
     Mnesia.create_schema([node()])
+    Mnesia.start()
 
-    case Mnesia.create_table(@entry_table, [
-          record_name: @entry_table,
-          attributes: [:title, :date, :slug, :content_raw, :content_html, :content_type]
-        ]
-        ) do
+    case Mnesia.create_table(@entry_table,
+           record_name: @entry_table,
+           attributes: [:title, :date, :slug, :content_raw, :content_html, :content_type]
+         ) do
       {:atomic, :ok} ->
         Mnesia.add_table_index(@entry_table, :content_type)
+        :ok
+
       _ ->
         :ok
     end
-
-    Mnesia.start()
   end
 
   @doc """
@@ -42,11 +43,11 @@ defmodule GitExPress.Entries.Storage do
   can be executed as one functional block.
   """
   @spec insert_entry(%Entry{}) :: {:ok, String.t()} | {:error, String.t()}
-  def insert_entry(entry) do
-
+  def insert_entry(entry) when is_map(entry) do
     data_to_write = fn ->
       Mnesia.write(
-        {@entry_table, entry.title, entry.date, entry.slug, entry.content_raw, entry.content_html, entry.content_type}
+        {@entry_table, entry.title, entry.date, entry.slug, entry.content_raw, entry.content_html,
+         entry.content_type}
       )
     end
 
@@ -75,12 +76,12 @@ defmodule GitExPress.Entries.Storage do
   defp perform_transaction(data) do
     case Mnesia.transaction(data) do
       {:atomic, result} ->
-        IO.puts("Transaction OK")
+        Logger.info("Transaction OK")
         {:ok, result}
 
       {:aborted, reason} ->
-        IO.puts("Transaction error")
-        IO.inspect reason
+        Logger.info("Transaction error")
+        IO.inspect(reason)
         {:error, reason}
     end
   end
