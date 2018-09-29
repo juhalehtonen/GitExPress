@@ -35,6 +35,7 @@ defmodule GitExPress.Fetcher do
   @doc """
   Run git pull in given `path`.
   """
+  @spec pull(String.t()) :: {:ok, String.t()} | {:error, String.t()}
   def pull(to_path \\ @local_path) do
     repo = %Git.Repository{path: to_path}
     Logger.info "Pulling at #{to_path}"

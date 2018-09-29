@@ -8,7 +8,7 @@ defmodule GitExPress.MixProject do
       elixir: "~> 1.7",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
-      # dialyzer: [plt_add_deps: :transitive],
+      dialyzer: [plt_add_deps: :apps_direct, plt_add_apps: [:mnesia]],
       test_coverage: [tool: ExCoveralls],
       preferred_cli_env: ["coveralls": :test, "coveralls.detail": :test, "coveralls.post": :test, "coveralls.html": :test]
     ]
