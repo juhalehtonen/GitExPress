@@ -3,7 +3,7 @@ defmodule GitExPress.Entries.Storage do
   This Storage module handles the Mnesia database.
   """
   require Logger
-  alias :mnesia, as: Mnesia
+  # alias :mnesia, as: Mnesia
   alias GitExPress.Entries.Entry
   @entry_table GitExPressEntries
 
@@ -11,7 +11,7 @@ defmodule GitExPress.Entries.Storage do
   1. Initialize a new empty schema by passing in a Node List.
   2. Create a table index for :source, allowing us to query by source.
   3. Create the table called entries and define the schema.
-  4. Start Mnesia.
+  4. Start :mnesia.
   TODO: Check if this succeeds? Does it matter? These four, respectively, return these
   when the table and the schema already exist on the system:
   {:error, {:nonode@nohost, {:already_exists, :nonode@nohost}}}
@@ -21,15 +21,15 @@ defmodule GitExPress.Entries.Storage do
   """
   @spec init() :: :ok | {:error, any()}
   def init do
-    Mnesia.create_schema([node()])
-    Mnesia.start()
+    :mnesia.create_schema([node()])
+    :mnesia.start()
 
-    case Mnesia.create_table(@entry_table,
+    case :mnesia.create_table(@entry_table,
            record_name: @entry_table,
            attributes: [:title, :date, :slug, :content_raw, :content_html, :content_type]
          ) do
       {:atomic, :ok} ->
-        Mnesia.add_table_index(@entry_table, :content_type)
+        :mnesia.add_table_index(@entry_table, :content_type)
         :ok
 
       _ ->
@@ -38,14 +38,14 @@ defmodule GitExPress.Entries.Storage do
   end
 
   @doc """
-  Insert an entry to our Mnesia database. We do this with an Mnesia transaction.
-  An Mnesia transaction is a mechanism by which a series of database operations
+  Insert an entry to our :mnesia database. We do this with an :mnesia transaction.
+  An :mnesia transaction is a mechanism by which a series of database operations
   can be executed as one functional block.
   """
   @spec insert_entry(%Entry{}) :: {:ok, String.t()} | {:error, String.t()}
   def insert_entry(entry) when is_map(entry) do
     data_to_write = fn ->
-      Mnesia.write(
+      :mnesia.write(
         {@entry_table, entry.title, entry.date, entry.slug, entry.content_raw, entry.content_html,
          entry.content_type}
       )
@@ -59,13 +59,13 @@ defmodule GitExPress.Entries.Storage do
   end
 
   @doc """
-  Return all entries. We do this with an Mnesia transaction.
-  An Mnesia transaction is a mechanism by which a series of database operations
+  Return all entries. We do this with an :mnesia transaction.
+  An :mnesia transaction is a mechanism by which a series of database operations
   can be executed as one functional block.
   """
-  def get_entries() do
+  def get_entries do
     data_to_read = fn ->
-      Mnesia.index_read(@entry_table, "blog", :content_type)
+      :mnesia.index_read(@entry_table, "blog", :content_type)
     end
 
     perform_transaction(data_to_read)
@@ -83,29 +83,28 @@ defmodule GitExPress.Entries.Storage do
     data_to_read =
       case field do
         :title ->
-          fn -> Mnesia.match_object({@entry_table, value, :_, :_, :_, :_, :_}) end
+          fn -> :mnesia.match_object({@entry_table, value, :_, :_, :_, :_, :_}) end
         :date ->
-          fn -> Mnesia.match_object({@entry_table, :_, value, :_, :_, :_, :_}) end
+          fn -> :mnesia.match_object({@entry_table, :_, value, :_, :_, :_, :_}) end
         :slug ->
-          fn -> Mnesia.match_object({@entry_table, :_, :_, value, :_, :_, :_}) end
+          fn -> :mnesia.match_object({@entry_table, :_, :_, value, :_, :_, :_}) end
         :content_type ->
-          fn -> Mnesia.match_object({@entry_table, :_, :_, :_, :_, :_, value}) end
+          fn -> :mnesia.match_object({@entry_table, :_, :_, :_, :_, :_, value}) end
       end
 
     perform_transaction(data_to_read)
   end
 
-  # Perform an Mnesia transaction on given `data`, where `data` is an Entry.
+  # Perform an :mnesia transaction on given `data`, where `data` is an Entry.
   @spec perform_transaction(fun()) :: tuple()
   defp perform_transaction(data) do
-    case Mnesia.transaction(data) do
+    case :mnesia.transaction(data) do
       {:atomic, result} ->
         Logger.info("Transaction OK")
         {:ok, result}
 
       {:aborted, reason} ->
         Logger.info("Transaction error")
-        IO.inspect(reason)
         {:error, reason}
     end
   end

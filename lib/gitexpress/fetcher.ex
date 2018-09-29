@@ -6,12 +6,6 @@ defmodule GitExPress.Fetcher do
   require Logger
   @local_path Application.get_env(:gitexpress, :local_path)
 
-  # TODO: Webhook config that allows us to expose an endpoint that can be plugged
-  # into by web apps, allowing us to get updates whenever updates are pushed to git.
-  # NOTE: This needs to support multiple sources, at least GitHub and GitLab,
-  # as the ways to secure these webhooks differ between the two. For MVP, we can
-  # probably just support GitHub for starters.
-
   @doc """
   The main public-facing function that is used to facilitate the cloning and all
   necessary file system checks to see if we can clone the repo or not.
@@ -21,11 +15,8 @@ defmodule GitExPress.Fetcher do
 
   If we cannot clone to git repository, check if it is still a git repository.
   If it is a git repo, we can do git pull. If it is not a git repo, error out.
-
-  TODO: Rename to something else, as fetch is a git term that we are not actually
-  doing here. Maybe just `get`?
   """
-  def fetch([repo_url, to_path]) do
+  def get([repo_url, to_path]) do
     cond do
       can_git_clone?(to_path) -> clone([repo_url, to_path])
       is_git_repository?(to_path) -> pull(to_path)

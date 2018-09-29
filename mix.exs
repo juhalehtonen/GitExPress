@@ -7,7 +7,10 @@ defmodule GitExPress.MixProject do
       version: "0.1.0",
       elixir: "~> 1.7",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      # dialyzer: [plt_add_deps: :transitive],
+      test_coverage: [tool: ExCoveralls],
+      preferred_cli_env: ["coveralls": :test, "coveralls.detail": :test, "coveralls.post": :test, "coveralls.html": :test]
     ]
   end
 
@@ -24,7 +27,10 @@ defmodule GitExPress.MixProject do
     [
       {:slugger, "~> 0.3.0"},
       {:earmark, "~> 1.2"},
-      {:git_cli, "~> 0.2.5"}
+      {:git_cli, "~> 0.2.5"},
+      {:dialyxir, "~> 1.0.0-rc.3", only: [:dev], runtime: false},
+      {:credo, "~> 0.10.2", only: [:dev, :test], runtime: false},
+      {:excoveralls, "~> 0.10.1", only: :test, runtime: false}
     ]
   end
 end

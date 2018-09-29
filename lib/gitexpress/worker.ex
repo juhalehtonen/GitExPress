@@ -3,6 +3,8 @@ defmodule GitExPress.Worker do
   Initializes the entry database on startup.
   """
   use GenServer
+  alias GitExPress.Entries
+  alias GitExPress.Entries.Storage
 
   # Client API
 
@@ -10,7 +12,7 @@ defmodule GitExPress.Worker do
     GenServer.start_link(__MODULE__, :ok, args)
   end
 
-  def reload_entries() do
+  def reload_entries do
     GenServer.call(__MODULE__, :reload_entries)
   end
 
@@ -34,16 +36,16 @@ defmodule GitExPress.Worker do
   and the current server state.
   Returns a tuple in the format {:reply, reply, new_state}.
   """
-  def handle_call(:reload_posts, _from, state) do
+  def handle_call(:reload_entries, _from, state) do
     hydrate_entries()
 
     {:reply, state, state}
   end
 
   defp hydrate_entries do
-    with :ok <- GitExPress.Entries.Storage.init(),
-         {:ok, entries} <- GitExPress.Entries.fetch_entries() do
-      Enum.each(entries, fn x -> GitExPress.Entries.Storage.insert_entry(x) end)
+    with :ok <- Storage.init(),
+         {:ok, entries} <- Entries.fetch_entries() do
+      Enum.each(entries, fn x -> Storage.insert_entry(x) end)
     end
   end
 end

@@ -4,6 +4,7 @@ defmodule GitExPress.Entries do
   functionality in our system.
   """
   alias GitExPress.Entries.Entry
+  alias GitExPress.Entries.Parser
   alias GitExPress.Entries.Storage
   alias GitExPress.Fetcher
 
@@ -19,8 +20,8 @@ defmodule GitExPress.Entries do
   retry.
   """
   def fetch_entries do
-    Fetcher.fetch([@remote_repository_url, @local_path])
-    entries = GitExPress.Entries.Parser.generate_entries()
+    Fetcher.get([@remote_repository_url, @local_path])
+    entries = Parser.generate_entries()
     {:ok, entries}
   end
 
@@ -30,8 +31,16 @@ defmodule GitExPress.Entries do
   def list_entries do
     {:ok, entries} = Storage.get_entries()
 
-    Enum.map(entries, fn {_table, title, date, slug, content_raw, content_html, content_type} ->
-      %Entry{title: title, date: date, slug: slug, content_raw: content_raw, content_html: content_html, content_type: content_type}
+    entries
+    |> Enum.map(fn {_table, title, date, slug, content_raw, content_html, content_type} ->
+      %Entry{
+        title: title,
+        date: date,
+        slug: slug,
+        content_raw: content_raw,
+        content_html: content_html,
+        content_type: content_type
+      }
     end)
     |> Enum.sort_by(fn entry -> entry.date end)
   end

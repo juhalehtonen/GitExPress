@@ -25,6 +25,16 @@ Date: 2018-12-31
 From this point on, content of the blog post in markdown format.
 ```
 
+## Testing
+
+Run the following whenever making changes:
+
+```
+mix test
+mix coveralls
+mix dialyzer --format dialyxir
+mix credo --strict
+```
 ## License
 
 Licensed under the MIT License.
