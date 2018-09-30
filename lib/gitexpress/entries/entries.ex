@@ -15,10 +15,8 @@ defmodule GitExPress.Entries do
   Update all entries to their latest available batch. Called by the GenServer
   worker. This controls what kind of data we ultimately end up saving on our
   service.
-
-  TODO: Make async. Use `with` and check that all fetches succeed, and if not,
-  retry.
   """
+  @spec fetch_entries() :: {:ok, list()}
   def fetch_entries do
     Fetcher.get([@remote_repository_url, @local_path])
     entries = Parser.generate_entries()
@@ -28,6 +26,7 @@ defmodule GitExPress.Entries do
   @doc """
   Returns all entries stored in the storage for the given source.
   """
+  @spec list_entries() :: list()
   def list_entries do
     {:ok, entries} = Storage.get_entries()
 
@@ -48,6 +47,7 @@ defmodule GitExPress.Entries do
   @doc """
   Creates an entry and saves it to the database.
   """
+  @spec create_entry(%Entry{}) :: {:ok, String.t()} | {:error, String.t()}
   def create_entry(entry) do
     entry
     |> Storage.insert_entry()
