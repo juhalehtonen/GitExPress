@@ -44,5 +44,5 @@ npm-debug.log
 # variables.
 /config/*.secret.exs
 
-# Mnesia databases
+# Mnesia databases that get stored locally
 Mnesia.*
