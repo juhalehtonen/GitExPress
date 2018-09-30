@@ -1,5 +1,7 @@
 # GitExPress
 
+[![Build Status](https://travis-ci.org/juhalehtonen/GitExPress.svg?branch=master)](https://travis-ci.org/juhalehtonen/GitExPress)
+
 A simple blog engine with a Git-based workflow. With GitExPress, you can write your blog posts in any public Git repository (e.g. in GitHub, GitLab..) as markdown files and have GitExPress automatically update the contents on your website when your posts are updated (see webhook section).
 
 GitExPress can be easily used with any Plug- or Phoenix-based web application.
