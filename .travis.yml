@@ -15,8 +15,6 @@ env:
 script:
   - mix test --trace
   - MIX_ENV=prod mix do compile --warnings-as-errors, archive.build, archive.install --force
-  # - mix format --check-formatted
+  - mix format --check-formatted
   - mix dialyzer --halt-exit-status
-  # - MIX_ENV=prod mix dialyzer --halt-exit-status
   - mix credo --strict
-  # - dialyzer --no_check_plt --plt $PLT_LOCATION --no_native _build/test/lib/ex_uptimerobot/ebin
