@@ -12,6 +12,7 @@ defmodule GitExPress.Entries.Parser do
   @doc """
   Go through all markdown posts and generates Posts from each.
   """
+  @spec generate_entries(String.t()) :: []
   def generate_entries(path \\ @source) do
     path
     |> get_files()
@@ -69,6 +70,7 @@ defmodule GitExPress.Entries.Parser do
   @doc """
   Construct a GitExPress Post using the `meta` and `content`.
   """
+  @spec construct_entry({:ok, map(), list()}) :: %Entry{}
   def construct_entry({:ok, meta, content}) do
     meta = Enum.map(meta, fn(x) ->
       x
@@ -91,6 +93,7 @@ defmodule GitExPress.Entries.Parser do
   @doc """
   Await for async list of tasks.
   """
+  @spec handle_tasks(any()) :: any()
   def handle_tasks(tasks) do
     Enum.map tasks, fn task -> Task.await task end
   end
