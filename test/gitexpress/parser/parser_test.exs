@@ -2,9 +2,9 @@ defmodule GitExPress.ParserTest do
   use ExUnit.Case
   alias GitExPress.Entries.Parser
 
-  setup_all do
-    [state: "whatever state we can refer to later on"]
-  end
+  # setup_all do
+  #   [state: "whatever state we can refer to later on"]
+  # end
 
   # Files
 
