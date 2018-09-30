@@ -16,28 +16,36 @@ defmodule GitExPress.Entries.Parser do
   def generate_entries(path \\ @source) do
     path
     |> get_files()
-    |> Enum.map(fn file -> Task.async GitExPress.Entries.Parser, :read, [file] end)
+    |> Enum.map(fn file -> Task.async(GitExPress.Entries.Parser, :read, [file]) end)
     |> handle_tasks()
     |> Enum.map(fn entry ->
-         Task.async GitExPress.Entries.Parser, :construct_entry, [entry]
-       end)
+      Task.async(GitExPress.Entries.Parser, :construct_entry, [entry])
+    end)
     |> handle_tasks()
   end
 
   @doc """
   Gets files from the given location, or as specified in the GitExPress config.
   Returns a list of paths.
+
+  Ignores README files.
   """
-  @spec get_files(String.t) :: list(String.t)
+  @spec get_files(String.t()) :: list(String.t())
   def get_files(path \\ @source) do
     path = path <> "/**/*.md"
-    Logger.info "Searching '.md' files using '#{path}' within '#{System.cwd}'"
+    Logger.info("Searching '.md' files using '#{path}' within '#{System.cwd()}'")
 
-    # Path.wildcard traverses paths according to the given glob expression and
-    # returns a list of matches.
-    Logger.info "Posts:"
-    Logger.info Path.wildcard(path)
-    Path.wildcard(path)
+    result =
+      path
+      |> Path.wildcard()
+      |> Enum.filter(fn filepath ->
+        !String.contains?(filepath, ["README", "readme"])
+      end)
+
+    Logger.info("Found #{Enum.count(result)} results:")
+    Logger.info(result)
+
+    result
   end
 
   @doc """
@@ -53,13 +61,14 @@ defmodule GitExPress.Entries.Parser do
   ```
 
   """
-  @spec read(String.t) :: tuple()
+  @spec read(String.t()) :: tuple()
   def read(file) do
     if File.exists?(file) do
-      [meta, content] = file
-      |> File.stream!
-      |> Stream.chunk_by(fn(x) -> String.starts_with?(x, [@meta_title, @meta_date]) end)
-      |> Enum.to_list()
+      [meta, content] =
+        file
+        |> File.stream!()
+        |> Stream.chunk_by(fn x -> String.starts_with?(x, [@meta_title, @meta_date]) end)
+        |> Enum.to_list()
 
       {:ok, meta, content}
     else
@@ -72,12 +81,13 @@ defmodule GitExPress.Entries.Parser do
   """
   @spec construct_entry({:ok, map(), list()}) :: %Entry{}
   def construct_entry({:ok, meta, content}) do
-    meta = Enum.map(meta, fn(x) ->
-      x
-      |> String.trim_leading("Title: ")
-      |> String.trim_leading("Date: ")
-      |> String.trim()
-    end)
+    meta =
+      Enum.map(meta, fn x ->
+        x
+        |> String.trim_leading("Title: ")
+        |> String.trim_leading("Date: ")
+        |> String.trim()
+      end)
 
     title = Enum.at(meta, 0)
     date = extract_date(Enum.at(meta, 1))
@@ -86,8 +96,16 @@ defmodule GitExPress.Entries.Parser do
     content_raw = List.to_string(content)
     content_html = Earmark.as_html!(content)
 
-    %Entry{title: title, date: date, slug: slug, content_raw: content_raw, content_html: content_html, content_type: "blog"}
+    %Entry{
+      title: title,
+      date: date,
+      slug: slug,
+      content_raw: content_raw,
+      content_html: content_html,
+      content_type: "blog"
+    }
   end
+
   def construct_post({:error, reason}), do: {:error, reason}
 
   @doc """
@@ -95,7 +113,7 @@ defmodule GitExPress.Entries.Parser do
   """
   @spec handle_tasks(any()) :: any()
   def handle_tasks(tasks) do
-    Enum.map tasks, fn task -> Task.await task end
+    Enum.map(tasks, fn task -> Task.await(task) end)
   end
 
   @doc """
@@ -114,11 +132,11 @@ defmodule GitExPress.Entries.Parser do
       ""
 
   """
-  @spec extract_date(String.t) :: tuple() | String.t
+  @spec extract_date(String.t()) :: tuple() | String.t()
   def extract_date(date_string) do
     case Date.from_iso8601(date_string) do
       {:ok, date} -> date
-      _           -> ""
+      _ -> ""
     end
   end
 end
