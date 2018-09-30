@@ -4,6 +4,9 @@ defmodule GitExPress.Fetcher do
   means Git repositories.
   """
   require Logger
+  @type repo_url :: String.t()
+  @type path :: String.t()
+  @type gitconf :: [repo_url() | path()]
   @local_path Application.get_env(:gitexpress, :local_path)
 
   @doc """
@@ -16,6 +19,7 @@ defmodule GitExPress.Fetcher do
   If we cannot clone to git repository, check if it is still a git repository.
   If it is a git repo, we can do git pull. If it is not a git repo, error out.
   """
+  @spec get(gitconf()) :: {:ok, String.t()} | {:error, String.t()}
   def get([repo_url, to_path]) do
     cond do
       can_git_clone?(to_path) -> clone([repo_url, to_path])
@@ -27,6 +31,7 @@ defmodule GitExPress.Fetcher do
   @doc """
   Clone a repository in `repo_url` to given local `to_path`.
   """
+  @spec clone(gitconf()) :: {:error, Git.Error} | {:ok, %Git.Repository{:path => nil | binary()}}
   def clone([repo_url, to_path]) do
     Logger.info "Cloning #{repo_url} to #{to_path}"
     Git.clone([repo_url, to_path])
@@ -51,6 +56,7 @@ defmodule GitExPress.Fetcher do
   1) If the directory exists, it must be empty
   2) If the directory does not exist, all is good (assuming permissions..)
   """
+  @spec can_git_clone?(String.t()) :: boolean()
   def can_git_clone?(path) do
     if directory_exists?(path) do
       is_empty_directory?(path)
@@ -62,6 +68,7 @@ defmodule GitExPress.Fetcher do
   @doc """
   Checks if a given directory at `path` exists.
   """
+  @spec directory_exists?(String.t()) :: boolean()
   def directory_exists?(path) do
     File.exists?(path)
   end
@@ -69,6 +76,7 @@ defmodule GitExPress.Fetcher do
   @doc """
   Scans a given `path` for a `.git` directory.
   """
+  @spec is_git_repository?(String.t()) :: boolean()
   def is_git_repository?(path) do
     path = path <> "/.git"
 
@@ -81,6 +89,7 @@ defmodule GitExPress.Fetcher do
   @doc """
   Scans a given `path` and checks whether it is empty.
   """
+  @spec is_empty_directory?(String.t()) :: boolean()
   def is_empty_directory?(path) do
     case File.ls(path) do
       {:ok, []} -> true
