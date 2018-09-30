@@ -4,7 +4,7 @@
 
 A simple blog engine with a Git-based workflow. With GitExPress, you can write your blog posts in any public Git repository (e.g. in GitHub, GitLab..) as markdown files and have GitExPress automatically update the contents on your website when your posts are updated (see webhook section).
 
-GitExPress can be easily used with any Plug- or Phoenix-based web application.
+Only files ending with .md are parsed (and README/CHANGELOG files are ignored), so drafts of posts can be created by simply using a different file extension (or omitting one altogether).
 
 ## Usage
 
