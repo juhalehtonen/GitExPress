@@ -33,7 +33,7 @@ defmodule GitExPress.Fetcher do
   """
   @spec clone(gitconf()) :: {:error, Git.Error} | {:ok, %Git.Repository{:path => nil | binary()}}
   def clone([repo_url, to_path]) do
-    Logger.info "Cloning #{repo_url} to #{to_path}"
+    Logger.info("Cloning #{repo_url} to #{to_path}")
     Git.clone([repo_url, to_path])
   end
 
@@ -43,7 +43,7 @@ defmodule GitExPress.Fetcher do
   @spec pull(String.t()) :: {:ok, String.t()} | {:error, String.t()}
   def pull(to_path \\ @local_path) do
     repo = %Git.Repository{path: to_path}
-    Logger.info "Pulling at #{to_path}"
+    Logger.info("Pulling at #{to_path}")
 
     case Git.pull(repo, ~w(origin master)) do
       {:ok, _} -> {:ok, "Pulled to #{to_path}"}
