@@ -6,6 +6,7 @@ defmodule GitExPress.Entries.Storage do
   # alias :mnesia, as: Mnesia
   alias GitExPress.Entries.Entry
   @entry_table GitExPressEntries
+  @entry_attributes [:title, :date, :slug, :content_raw, :content_html, :content_type]
 
   @doc """
   1. Initialize a new empty schema by passing in a Node List.
@@ -26,7 +27,7 @@ defmodule GitExPress.Entries.Storage do
 
     case :mnesia.create_table(@entry_table,
            record_name: @entry_table,
-           attributes: [:title, :date, :slug, :content_raw, :content_html, :content_type]
+           attributes: @entry_attributes
          ) do
       {:atomic, :ok} ->
         :mnesia.add_table_index(@entry_table, :content_type)
@@ -63,6 +64,7 @@ defmodule GitExPress.Entries.Storage do
   An :mnesia transaction is a mechanism by which a series of database operations
   can be executed as one functional block.
   """
+  @spec get_entries() :: {:ok, list()} | {:error, list()}
   def get_entries do
     data_to_read = fn ->
       :mnesia.index_read(@entry_table, "blog", :content_type)
@@ -79,20 +81,34 @@ defmodule GitExPress.Entries.Storage do
 
   # TODO: Restrict only to specific field atoms, now we can pass anything and still attempt a transaction
   """
+  @spec get_entries_by(atom(), any()) :: {:ok, list()} | {:error, String.t()}
   def get_entries_by(field, value) when is_atom(field) do
-    data_to_read =
-      case field do
-        :title ->
-          fn -> :mnesia.match_object({@entry_table, value, :_, :_, :_, :_, :_}) end
-        :date ->
-          fn -> :mnesia.match_object({@entry_table, :_, value, :_, :_, :_, :_}) end
-        :slug ->
-          fn -> :mnesia.match_object({@entry_table, :_, :_, value, :_, :_, :_}) end
-        :content_type ->
-          fn -> :mnesia.match_object({@entry_table, :_, :_, :_, :_, :_, value}) end
-      end
+    if Enum.member?(@entry_attributes, field) do
+      data_to_read =
+        case field do
+          :title ->
+            fn -> :mnesia.match_object({@entry_table, value, :_, :_, :_, :_, :_}) end
 
-    perform_transaction(data_to_read)
+          :date ->
+            fn -> :mnesia.match_object({@entry_table, :_, value, :_, :_, :_, :_}) end
+
+          :slug ->
+            fn -> :mnesia.match_object({@entry_table, :_, :_, value, :_, :_, :_}) end
+
+          :content_raw ->
+            fn -> :mnesia.match_object({@entry_table, :_, :_, :_, value, :_, :_}) end
+
+          :content_html ->
+            fn -> :mnesia.match_object({@entry_table, :_, :_, :_, :_, value, :_}) end
+
+          :content_type ->
+            fn -> :mnesia.match_object({@entry_table, :_, :_, :_, :_, :_, value}) end
+        end
+
+      perform_transaction(data_to_read)
+    else
+      {:error, "Given field not one of Entry attributes"}
+    end
   end
 
   # Perform an :mnesia transaction on given `data`, where `data` is an Entry.
