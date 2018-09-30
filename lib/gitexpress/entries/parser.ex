@@ -8,6 +8,7 @@ defmodule GitExPress.Entries.Parser do
   @source Application.get_env(:gitexpress, :local_path)
   @meta_title "Title: "
   @meta_date "Date: "
+  @patterns_to_ignore ["README", "readme", "CHANGELOG", "changelog"]
 
   @doc """
   Go through all markdown posts and generates Posts from each.
@@ -39,7 +40,7 @@ defmodule GitExPress.Entries.Parser do
       path
       |> Path.wildcard()
       |> Enum.filter(fn filepath ->
-        !String.contains?(filepath, ["README", "readme"])
+        !String.contains?(filepath, @patterns_to_ignore)
       end)
 
     Logger.info("Found #{Enum.count(result)} results:")
