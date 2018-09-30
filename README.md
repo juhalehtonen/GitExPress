@@ -10,7 +10,7 @@ Before using GitExPress, you need to configure a couple of things:
 
 - HTTPS URL of your remote Git repository
 - Local path where to clone/pull said directory
-- Webhook secret
+- ~~Webhook secret~~ (TODO)
 
 GitExPress can be used without a webhook, but not setting one up means you need to provide an alternative method for updating your blog posts. This can be a periodic GenServer, manual labour, or whatever you wish.
 
@@ -22,19 +22,21 @@ To ensure GitExPress can parse the blog posts, they need to be in a following fo
 Title: Title of the blog post
 Date: 2018-12-31
 
-From this point on, content of the blog post in markdown format.
+From this point on, content of the blog post in [markdown](https://daringfireball.net/projects/markdown/) format.
 ```
 
 ## Testing
 
-Run the following whenever making changes:
+Run the following whenever making changes to ensure code quality stays consistent (also ran on TravisCI):
 
 ```
 mix test
 mix coveralls
+mix format --check-formatted
 mix dialyzer --format dialyxir
 mix credo --strict
 ```
+
 ## License
 
 Licensed under the MIT License.
