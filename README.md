@@ -37,9 +37,9 @@ Configure the following in `config.exs`):
 
 ```
 config :gitexpress,
-  github_webhook_secret: "your-secret-from-github",
-  github_webhook_path: "/path/to/github-webhook-route-handler",
-  github_webhook_action: {App.GithubWebhookHandler, :handle}
+  github_webhook_secret: "foo",
+  github_webhook_path: "/api/github_webhook",
+  github_webhook_action: {GitExPress.Webhook.GitHub, :handle}
 ```
 
 ## Testing
