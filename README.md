@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/juhalehtonen/GitExPress.svg?branch=master)](https://travis-ci.org/juhalehtonen/GitExPress)
 
-A simple blog engine with a Git-based workflow. With GitExPress, you can write your blog posts in any public Git repository (e.g. in GitHub, GitLab..) as markdown files and have GitExPress automatically update the contents on your website when your posts are updated (see webhook section).
+A simple blog engine with a Git-based workflow. With GitExPress, you can write your blog posts in any any Git repository (e.g. in GitHub, GitLab..) as markdown files and, for supported service providers, have GitExPress automatically update the contents on your website when your posts are updated (see webhook section).
 
 Only files ending with .md are parsed (and README/CHANGELOG files are ignored), so drafts of posts can be created by simply using a different file extension (or omitting one altogether).
 
@@ -25,6 +25,21 @@ Title: Title of the blog post
 Date: 2018-12-31
 
 From this point on, content of the blog post in [markdown](https://daringfireball.net/projects/markdown/) format.
+```
+
+## Webhooks
+
+You can configure a webhook for the following service providers:
+
+### GitHub
+
+Configure the following in `config.exs`):
+
+```
+config :gitexpress,
+  github_webhook_secret: "foo",
+  github_webhook_path: "/api/github_webhook",
+  github_webhook_action: {GitExPress.Webhook.GitHub, :handle}
 ```
 
 ## Testing

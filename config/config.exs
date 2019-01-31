@@ -34,4 +34,7 @@ use Mix.Config
 # - a `remote_source` for a git repository where source .md files live
 config :gitexpress,
   local_path: "/Users/juhalehtonen/blogposts",
-  remote_repository_url: "https://gitlab.com/juhalehtonen/test.git"
+  remote_repository_url: "https://gitlab.com/juhalehtonen/test.git",
+  github_webhook_secret: "foo",
+  github_webhook_path: "/api/github_webhook",
+  github_webhook_action: {GitExPress.Webhook.GitHub, :handle}

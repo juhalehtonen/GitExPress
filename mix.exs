@@ -33,6 +33,7 @@ defmodule GitExPress.MixProject do
       {:slugger, "~> 0.3.0"},
       {:earmark, "~> 1.2"},
       {:git_cli, "~> 0.2.5"},
+      {:plug, "~> 1.6"},
       {:dialyxir, "~> 1.0.0-rc.3", only: [:dev, :test], runtime: false},
       {:credo, "~> 0.10.2", only: [:dev, :test], runtime: false},
       {:excoveralls, "~> 0.10.1", only: :test, runtime: false}
