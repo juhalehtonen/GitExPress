@@ -29,7 +29,6 @@ use Mix.Config
 #
 #     import_config "#{Mix.env()}.exs"
 
-
 # Configure location for blog posts:
 # - a `local_source` for a directory where .md files get pulled to
 # - a `remote_source` for a git repository where source .md files live
