@@ -14,7 +14,7 @@ env:
   # - wget -O $PLT_LOCATION https://raw.github.com/danielberkompas/travis_elixir_plts/master/$PLT_FILENAME
 script:
   - mix test --trace
-  - MIX_ENV=prod mix do compile --warnings-as-errors, archive.build, archive.install --force
+  - MIX_ENV=prod mix do compile, archive.build, archive.install --force
   - mix format --check-formatted
   - mix dialyzer --halt-exit-status
   - mix credo --strict
